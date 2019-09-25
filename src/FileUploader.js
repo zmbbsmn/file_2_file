@@ -1,6 +1,7 @@
 import React from 'react'
 import FileInput, {FileOp} from './FileInput'
 
+const back_end = 'XXX'
 
 class FileUploader extends React.Component {
 
@@ -16,10 +17,26 @@ class FileUploader extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({
-            files_required: ['Placeholder1', 'Placeholder2'],
-            action_required: 'ActionPlaceholder'
-        });
+
+        fetch(back_end+'/appoutline/').then(
+            response => {
+                response.json().then(
+                    data => {
+                        console.log(data);
+                        this.setState({
+                            files_required: data.files_required,
+                            action_required: data.action_required
+                        });
+                    });
+            },
+            rejection => {
+                console.log(rejection);
+                this.setState({
+                    files_required: ['Placeholder1', 'Placeholder2'],
+                    action_required: 'ActionPlaceholder'
+                });
+            }   
+        );
     }
 
     handleFileSubmit(fileToOp, op) {
