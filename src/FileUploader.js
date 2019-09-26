@@ -38,23 +38,24 @@ class FileUploader extends React.Component {
         );
     }
 
-    handleFileSubmit(fileToOp, op) {
+    handleFileSubmit(fileSrc, fileToOp, op) {
 
         if (op === FileOp.ADD) {
-            this.files_collected.push(fileToOp)
+            this.files_collected.push({fileSrc,fileToOp})
         } else if (op === FileOp.DEL) {
             this.files_collected = this.files_collected.filter( 
-                f => { return f.name !== fileToOp.name }
+                ({_,f}) => { return f.name !== fileToOp.name }
             )
         }
+        console.log(this.files_collected)
     }
 
     handleActionBtnClick () {
         var data = new FormData();
+
         if (this.files_collected.length === this.state.files_required.length) {
 
-            this.files_collected.forEach(f => data.append(f.name, f))
-
+            this.files_collected.forEach( e => data.append(e.fileSrc, e.fileToOp))
             fetch(back_end+'/filefetch/', {
                 method: 'POST',
                 body: data
@@ -62,17 +63,11 @@ class FileUploader extends React.Component {
                   response => {
                     response.json().then(
                         data => {
-                            console.log(data)
                             this.setState({
                                 result: data
                             });
                         }
                     ) 
-                  },
-                  rejection => {
-                      this.setState({
-                          result: 'error'
-                      })
                   }
               );
             this.setState();

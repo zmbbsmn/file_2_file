@@ -36,7 +36,7 @@ class FileInput extends React.Component {
             showCancel: filePassedIn ? true : false
         })
 
-        this.props.onSubmit(fileToOp, op);
+        this.props.onSubmit(this.props.label, fileToOp, op);
     }
 
     render() {
