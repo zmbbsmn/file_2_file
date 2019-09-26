@@ -1,7 +1,7 @@
 import React from 'react'
 import FileInput, {FileOp} from './FileInput'
 
-const back_end = 'XXX'
+const back_end = 'path/to/api'
 
 class FileUploader extends React.Component {
 
@@ -22,7 +22,6 @@ class FileUploader extends React.Component {
             response => {
                 response.json().then(
                     data => {
-                        console.log(data);
                         this.setState({
                             files_required: data.files_required,
                             action_required: data.action_required
@@ -48,8 +47,39 @@ class FileUploader extends React.Component {
                 f => { return f.name !== fileToOp.name }
             )
         }
-        console.log('collected files: ')
-        console.log(this.files_collected);
+    }
+
+    handleActionBtnClick () {
+        var data = new FormData();
+        if (this.files_collected.length === this.state.files_required.length) {
+
+            this.files_collected.forEach(f => data.append(f.name, f))
+
+            fetch(back_end+'/filefetch/', {
+                method: 'POST',
+                body: data
+              }).then(
+                  response => {
+                    response.json().then(
+                        data => {
+                            console.log(data)
+                            this.setState({
+                                result: data
+                            });
+                        }
+                    ) 
+                  },
+                  rejection => {
+                      this.setState({
+                          result: 'error'
+                      })
+                  }
+              );
+            this.setState();
+
+        } else {
+            alert('at least 1 file is missing');
+        }
     }
 
     render() {
@@ -63,7 +93,9 @@ class FileUploader extends React.Component {
                         onSubmit={this.handleFileSubmit} />)}
                 </ul>
 
-                <button>{this.state.action_required}</button>
+                <button onClick={this.handleActionBtnClick.bind(this)}>
+                    {this.state.action_required}
+                </button>
 
                 <div>
                     {this.state.result}
