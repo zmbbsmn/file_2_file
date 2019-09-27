@@ -64,7 +64,7 @@ class FileUploader extends React.Component {
                     response.json().then(
                         data => {
                             this.setState({
-                                result: data
+                                result: data.data
                             });
                         }
                     ) 
