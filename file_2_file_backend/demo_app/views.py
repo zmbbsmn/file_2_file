@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.files.storage import default_storage
+from django.http import FileResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
@@ -30,6 +31,9 @@ class FileFetch(APIView):
                 'data': 'file {0} is not found'.format(key)
                 })
                 return response
-        return Response({
-            'data': 'ok'
-        })
+        
+        response_file = 'path/to/file'
+        response = FileResponse(open(response_file, 'rb'), 
+                                as_attachment=True,
+                                filename='urls.py')
+        return response
